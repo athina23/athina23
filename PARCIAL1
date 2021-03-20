@@ -1,0 +1,170 @@
+import java.util.*;
+
+class BancoCore{
+  // Creamos una arreglo
+  String[] cliente_usuario = new String[2];
+  String[] cliente_password = new String[2];
+  Double[] cliente_monto_i = new Double[2];
+  Double[] cliente_monto_f = new Double[2];
+  boolean[] cliente_change_pass = new boolean[2];
+  public BancoCore(){
+    cliente_usuario[0] = "User_1";
+    cliente_password[0] = "qwerty";
+    cliente_monto_i[0] = 1500.00;
+    cliente_monto_f[0] = cliente_monto_i[0];
+    cliente_change_pass[0] = true;
+    cliente_usuario[1] = "User_2";
+    cliente_password[1] = "12345";
+    cliente_monto_i[1] = 1500.00;
+    cliente_monto_f[1] = cliente_monto_i[1];
+    cliente_change_pass[1] = true;
+  }
+  // Declaramos el metodo get correspondiente.
+  public String get_cliente_usuario(int indice){
+    return cliente_usuario[indice];
+  }
+  // Declaramos el metodo set y get correspondiente a password.
+  public void set_cliente_password(int indice,String pass){
+    cliente_password[indice] = pass;
+  }
+  public String get_cliente_password(int indice){
+    return cliente_password[indice];
+  }
+  // declaramos los montos iniciales
+  public double get_cliente_monto_i(int indice){
+    return cliente_monto_i[indice];
+  }
+    // Declaramos el metodo set y get correspondiente a monto final.
+  public void set_cliente_monto_f(int indice,double cantidad){
+    cliente_monto_f[indice] = cantidad;
+  }
+  public double get_cliente_monto_f(int indice){
+    return cliente_monto_f[indice];
+  }
+  public void set_cliente_change_pass(int indice,boolean valor){
+    cliente_change_pass[indice] = valor;
+  }
+  public boolean get_cliente_change_pass(int indice){
+    return cliente_change_pass[indice];
+  }
+}
+class Banco {
+
+    public static void main(String[] args)
+    {
+      BancoCore obj = new BancoCore();
+      Date date = new Date();
+      Scanner sc = new Scanner(System.in);
+      boolean start_login = false;
+      int salir_all_option = 0;
+      int usuario_key = 99;
+      int other_user = 99;
+      System.out.println("Usuario 1 User="+obj.get_cliente_usuario(0)+" Pass="+obj.get_cliente_password(0)+" MontoInicial="+obj.get_cliente_monto_i(0));
+      System.out.println("Usuario 2 User="+obj.get_cliente_usuario(1)+" Pass="+obj.get_cliente_password(1)+" MontoInicial="+obj.get_cliente_monto_i(1));
+      while(true){
+        if(salir_all_option == 1){
+          System.out.println("\u001B[0m Ingrese X para Cerrar Todo, ingrese cualquiera otra tecla para salir. Seguido de enter:");
+          String salir_all = sc.nextLine();
+          if("X".equals(salir_all)){
+            break;
+          }
+        }
+        System.out.println("\u001B[0m Ingrese su usuario:");
+        String usuario = sc.nextLine();
+        System.out.println("\u001B[0m Ingrese su password:");
+        String password = sc.nextLine();
+        Date date_start = new Date();
+        if (obj.get_cliente_usuario(0).equals(usuario) && obj.get_cliente_password(0).equals(password)){
+            System.out.println("\u001B[32m Inicio Seccion Correctamente "+obj.get_cliente_usuario(0));
+            usuario_key = 0;
+            other_user = 1;
+            start_login = true;
+            System.out.println("\u001B[32m Ha iniciado seccion el "+date_start.toString());
+        } else if(obj.get_cliente_usuario(1).equals(usuario) && obj.get_cliente_password(1).equals(password)){
+            System.out.println("\u001B[32m Inicio Seccion Correctamente "+obj.get_cliente_usuario(1));
+            usuario_key = 1;
+            other_user = 0;
+            start_login = true;
+            System.out.println("\u001B[32m Ha iniciado seccion el "+date_start.toString());
+        } else {
+           System.out.println("\u001B[31m El usuario o la contrasena no son validos..");
+        }
+        if (start_login){
+          while(true){
+            int salir  = 0;
+            salir_all_option = 1;
+            if(obj.get_cliente_change_pass(usuario_key)){
+                System.out.println("\u001B[0m########  Debe Cambiar la Contrasena ########");
+                System.out.println("\u001B[0m Ingrese su nuevo password:");
+                String new_password = sc.nextLine();
+                obj.set_cliente_password(usuario_key,new_password);
+                obj.set_cliente_change_pass(usuario_key,false);
+                System.out.println("\u001B[32m Su contrasena se ha cambiado correctamente ");
+            }
+            System.out.println("\u001B[0m######## Menu ########");
+            System.out.println("\u001B[0m Nota: Ingrese el numero de la accion que desea realizar");
+            System.out.println("\u001B[0m 1.) Ver Estado de Cuenta");
+            System.out.println("\u001B[0m 2.) Solicitar Credito");
+            System.out.println("\u001B[0m 3.) Cambiar Contrasena");
+            System.out.println("\u001B[0m 4.) Salir");
+            System.out.println("\u001B[0m Ingrese la opcion de menu: ");
+            String menu = sc.nextLine();
+            switch(menu){
+              case "1":
+                  System.out.println("\u001B[0m######## Estado de Cuenta ########");
+                  System.out.println("\u001B[0m Cliente ID:"+usuario_key);
+                  System.out.println("\u001B[0m User: "+obj.get_cliente_usuario(usuario_key));
+                  System.out.println("\u001B[0m Monto Inicial: "+obj.get_cliente_monto_i(usuario_key));
+                  System.out.println("\u001B[0m Monto Final: "+obj.get_cliente_monto_f(usuario_key));
+                  break;
+              case "2":
+                    while(true){
+                        try
+                        {
+                            System.out.println("\u001B[0m Ingrese la cantidad que va a solicitar: ");
+                            String str = sc.nextLine();
+                            Double numero = Double.parseDouble(str);
+                            Double cantidad = numero * 100;
+                            Double porcen = cantidad / obj.get_cliente_monto_f(other_user);
+                            if (porcen <= 90.0){
+                              Double cantida_client = numero + obj.get_cliente_monto_f(usuario_key);
+                              Double cantida_other = obj.get_cliente_monto_f(usuario_key) - numero;
+                              obj.set_cliente_monto_f(usuario_key,cantida_client);
+                              obj.set_cliente_monto_f(other_user,cantida_other);
+                              break;
+                            }
+                            System.out.println("\u001B[31m El valor ingresado supera el capital del banco.");
+                            System.out.println("\u001B[0m Ingrese X para Cerrar Todo, ingrese cualquiera otra tecla para salir. Seguido de enter:");
+                            String salir_alll = sc.nextLine();
+                            if("X".equals(salir_alll)){
+                              break;
+                            }
+                      }catch(Exception $e){
+                        System.out.println("\u001B[31m El opcion ingresa no se puede transformar a double.");
+                      }
+                    }
+                  break;
+              case "3":
+                    System.out.println("\u001B[0m########  Cambiar la Contrasena ########");
+                    System.out.println("\u001B[0m Ingrese su nuevo password:");
+                    String new_password_1 = sc.nextLine();
+                    obj.set_cliente_password(usuario_key,new_password_1);
+                    System.out.println("\u001B[32m Su contrasena se ha cambiado correctamente ");
+                    break;
+              case "4":
+                  Date date_stop = new Date();
+                  System.out.println("\u001B[32m Ha salido del Sistema el "+date_stop.toString());
+                  salir = 1;
+                  start_login = false;
+                  usuario_key = 99;
+                  other_user = 99;
+                  break;
+          }
+          if(salir == 1){
+            break;
+          }
+        }
+      }
+    }
+  }
+}
